@@ -1,0 +1,46 @@
+{% load static %}
+{% if is_paginated %}
+    {% include 'partial/pagination.html' %}
+{% endif %}
+
+<h2>Статьи</h2>
+
+{% for article in articles %}
+
+    <h3>{{ article.upper }}</h3>
+
+    <p><a href="{{ article.get_absolute_url }}">Подробнее...</a></p>
+
+    {% if perms.webapp.change_article or user == article.author %}
+        <p><a href="{% url "webapp:article_update_view" article.pk %}">Редактировать</a></p>
+    {% endif %}
+
+    {% if perms.webapp.delete_article %}
+        <p><a href="{% url "webapp:article_delete_view" article.pk %}">Удалить</a></p>
+    {% endif %}
+    {% if user.is_authenticated %}
+        {% if article.is_liked %}
+            <form action='{% url "webapp:article_unlike" article.pk %}' data-method="delete" class="like-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger d-inline like-btn">Unlike</button>
+                <div class="like-counter d-inline">{{ article.likes.count }}</div>
+            </form>
+        {% else %}
+            <form action='{% url "webapp:article_like" article.pk %}' data-method="post" class="like-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger d-inline like-btn">Like</button>
+                <div class="like-counter d-inline">{{ article.likes.count }}</div>
+            </form>
+        {% endif %}
+    {% endif %}
+    {% empty %}
+    <p>Статьи не найдены...</p>
+{% endfor %}
+
+{% if is_paginated %}
+    {% include 'partial/pagination.html' %}
+{% endif %}
+
+{% block scripts %}
+    <script src="{% static 'js/index.js' %}"></script>
+{% endblock %}
