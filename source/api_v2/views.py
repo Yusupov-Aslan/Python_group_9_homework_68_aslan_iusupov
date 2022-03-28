@@ -39,3 +39,12 @@ class ArticleUpdateView(APIView):
         serializer.save()
         return Response(serializer.data)
 
+
+class ArticleDeleteView(APIView):
+    def delete(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        article = Article.objects.get(id=pk)
+        response = {"id": pk}
+        article.delete()
+        return Response(response)
+
