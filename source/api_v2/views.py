@@ -20,3 +20,11 @@ class ArticleCreateView(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=400)
+
+
+class ArticleDetailView(APIView):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        article = Article.objects.get(id=pk)
+        serializer = ArticleSerializer(article)
+        return Response(serializer.data)
