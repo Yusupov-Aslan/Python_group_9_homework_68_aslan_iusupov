@@ -28,3 +28,14 @@ class ArticleDetailView(APIView):
         article = Article.objects.get(id=pk)
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
+
+
+class ArticleUpdateView(APIView):
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        article = Article.objects.get(id=pk)
+        serializer = ArticleSerializer(article, request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
